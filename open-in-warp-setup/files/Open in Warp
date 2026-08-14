@@ -1,0 +1,20 @@
+#!/bin/bash
+# Mở Warp Terminal tại thư mục đang chọn (hoặc thư mục hiện tại trong Nautilus)
+
+# Nếu right-click vào 1 folder -> dùng folder đó
+if [ -n "$1" ] && [ -d "$1" ]; then
+    DIR="$(realpath "$1")"
+else
+    # Ngược lại dùng thư mục Nautilus đang mở (URI -> path, giải mã %20 ...)
+    DIR="$(printf '%b' "${NAUTILUS_SCRIPT_CURRENT_URI#file://}" | sed 's/%\(..\)/\\x\1/g' | xargs -0 printf '%b' 2>/dev/null)"
+    [ -d "$DIR" ] || DIR="$PWD"
+fi
+
+cd "$DIR" || exit 1
+
+if pgrep -x warp >/dev/null 2>&1 || pgrep -x warp-terminal >/dev/null 2>&1; then
+    # Warp đang chạy -> dùng deep link để mở tab/cửa sổ mới đúng thư mục
+    setsid warp-terminal "warp://action/new_window?path=$DIR" >/dev/null 2>&1 &
+else
+    setsid warp-terminal >/dev/null 2>&1 &
+fi
