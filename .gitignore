@@ -1,2 +1,5 @@
 # folder
 .vscode
+
+# Claude Code local state
+.claude/
