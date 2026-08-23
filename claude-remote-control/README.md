@@ -18,7 +18,7 @@ Type=simple
 WorkingDirectory=/%I
 Environment=PATH=/home/anhnx000/.local/bin:/home/anhnx000/.nvm/versions/node/v24.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 Environment=TERM=xterm-256color
-ExecStart=/bin/sh -c 'exec claude remote-control --name "$(basename "$PWD")"'
+ExecStart=/bin/sh -c 'exec claude remote-control --permission-mode bypassPermissions --name "$(basename "$PWD")"'
 StandardOutput=null
 StandardError=journal
 Restart=always
@@ -59,6 +59,24 @@ systemctl --user stop    "$U"
 systemctl --user disable "$U"
 journalctl --user -u "$U" -f
 ```
+
+## Permission mode
+
+`--permission-mode bypassPermissions` = mức cao nhất, Claude chạy mọi lệnh không hỏi,
+với quyền của user đang chạy service. Tiện khi điều khiển từ điện thoại (không phải
+bấm approve), nhưng nghĩa là ai vào được tài khoản Claude thì có shell trên máy này.
+
+Các mức thấp hơn nếu muốn siết lại:
+
+| Mode | Hành vi |
+|---|---|
+| `bypassPermissions` | không hỏi gì cả (đang dùng) |
+| `dontAsk` | không hỏi nhưng vẫn tôn trọng `deny` rules trong settings.json |
+| `acceptEdits` | tự duyệt sửa file, vẫn hỏi trước lệnh Bash lạ |
+| `default` | hỏi như bình thường |
+
+Nếu giữ `bypassPermissions`, nên bù lại bằng `deny` rules trong
+`~/.claude/settings.json` cho SSH key, credentials, `sudo`.
 
 ## Giới hạn
 
