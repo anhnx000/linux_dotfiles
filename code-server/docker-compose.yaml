@@ -1,0 +1,23 @@
+services:
+  code-server:
+    build:
+      context: .
+    image: code-server-docker:4.133.0
+    container_name: code-server
+    restart: unless-stopped
+    user: "1000:1000"
+    # GID of the host's `docker` group -- owns /var/run/docker.sock. The
+    # container user needs it as a supplementary group to open the socket.
+    group_add:
+      - "125"
+    environment:
+      DOCKER_USER: anhnx000
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./config:/home/coder/.config
+      - ./local:/home/coder/.local
+      - ../:/code-repo
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /work
+    command: --bind-addr 0.0.0.0:8080 /work
