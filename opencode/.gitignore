@@ -1,0 +1,5 @@
+# runtime state: pids, logs, credentials
+.run/
+
+# opencode session snapshots
+session-*.json

@@ -3,3 +3,6 @@
 
 # Claude Code local state
 .claude/
+
+# Binary packages
+cloudflared.deb
