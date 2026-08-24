@@ -1,0 +1,27 @@
+[Unit]
+Description=Host Terminal Web (ttyd) - máy chính, có mật khẩu
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/anhnx000
+Environment=PATH=/home/anhnx000/.local/bin:/home/anhnx000/.nvm/versions/node/v24.19.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=TERM=xterm-256color
+Environment=HOST_TERM_PORT=2352
+# Mật khẩu thật đọc từ ~/.config/host-terminal.env (KHÔNG commit lên repo).
+# Dòng dưới chỉ là mặc định placeholder; EnvironmentFile ghi đè nó khi tồn tại.
+Environment=HOST_TERM_CRED=user:CHANGE_ME
+EnvironmentFile=-%h/.config/host-terminal.env
+# 127.0.0.1 = chỉ máy này. Đổi thành 0.0.0.0 nếu muốn mở ra LAN / Cloudflare Tunnel.
+Environment=HOST_TERM_BIND=127.0.0.1
+ExecStart=/bin/sh -c 'exec ttyd -d 1 -p "$HOST_TERM_PORT" -i "$HOST_TERM_BIND" -W \
+  -c "$HOST_TERM_CRED" \
+  -t fontSize=15 -t "theme={\"background\":\"#1e1e2e\"}" \
+  -t titleFixed="Host Terminal - anhnx000" \
+  tmux new -A -s host-term'
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

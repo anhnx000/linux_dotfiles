@@ -6,3 +6,10 @@
 
 # Binary packages
 cloudflared.deb
+
+# Secrets / local state không được commit (repo này PUBLIC)
+*.env
+!*.env.example
+host-terminal/*.env
+code-server/config/
+code-server/local/
